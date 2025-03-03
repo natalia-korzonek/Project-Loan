@@ -1,0 +1,8 @@
+Jako audytor w firmie udzielającej pożyczek otrzymałeś zadanie
+analizy danych w celu zidentyfikowania potencjalnych
+przypadków manipulacji kwotami w czerwcu 2024 roku. W pliku
+„Dane_pożyczki.xlsx” posiadasz historyczne dane zawierające
+kwoty (kolumna C) oraz odpowiadające im miesiące (kolumna A).
+Twoim zadaniem jest ocenić, czy na podstawie analizy tych
+danych istnieją przesłanki sugerujące, że doszło do sfałszowania
+kwot w czerwcu 2024 roku, i uzasadnić swoje wnioski.
