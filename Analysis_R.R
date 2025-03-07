@@ -10,104 +10,111 @@ library(readxl)
 library(dplyr)
 library(ggpubr)
 
-# Wczytanie danych 
+# Loading the data 
 file_path <- "C:/Users/Natalia/Downloads/Dane_pożyczki (1).xlsx" 
 data <- read_excel("C:/Users/Natalia/Downloads/Dane_pożyczki (1).xlsx" )
 
-# Wyświetlenie pierwszych kilku wierszy danych
-print("Pierwsze kilka wierszy danych:")
+# Displaying the first few rows of data
+print("First few rows of the data:")
 head(data)
 
-# Sprawdzenie struktury danych
+# Checking the structure of the data
 str(data)
 
-# Wyświetlenie unikalnych wartości w kolumnie miesiące
+# Displaying unique values in the 'Month' column
 unique_months <- unique(data$data_spr)
-print("Unikalne wartości w kolumnie 'Miesiąc':")
+print("Unique values in the 'Month' column:")
 print(unique_months)
 
-# Filtrowanie danych na czerwiec 2024
+# Filtering data for June 2024
 june_data <- data %>% filter(data_spr == '06.2024')
 
-# Wyświetlenie danych z czerwca 2024
-print("Dane z czerwca 2024:")
+# Displaying data for June 2024
+print("Data from June 2024:")
 print(june_data)
 
-# Statystyki opisowe
+# Descriptive statistics
 summary_stats <- summary(june_data$kw_pozyczki_pln)
-print("Statystyki opisowe dla kwot w czerwcu 2024:")
+print("Descriptive statistics for loan amounts in June 2024:")
 print(summary_stats)
 
-# Ustalanie wartości odstających
+# Identifying outliers
 Q1 <- quantile(june_data$kw_pozyczki_pln, 0.25)
 Q3 <- quantile(june_data$kw_pozyczki_pln, 0.75)
 IQR <- Q3 - Q1
 lower_bound <- Q1 - 1.5 * IQR
 upper_bound <- Q3 + 1.5 * IQR
 
-# Wartości odstające
+# Outliers
 outliers <- june_data %>% filter(kw_pozyczki_pln < lower_bound | kw_pozyczki_pln > upper_bound)
 
-print("Wartości odstające:")
+print("Outliers:")
 print(outliers)
 
-# Wizualizacja rozkładu kwot pożyczek
+# Visualization of the loan amount distribution
 ggplot(june_data, aes(x = kw_pozyczki_pln)) +
   geom_histogram(bins = 30, fill = "lightblue", color = "black", alpha = 0.7) +
   geom_density(aes(y = ..count..), color = "blue") +
   geom_vline(xintercept = lower_bound, color = "red", linetype = "dashed", size = 1) +
   geom_vline(xintercept = upper_bound, color = "red", linetype = "dashed", size = 1) +
-  labs(title = "Rozkład kwot pożyczek w czerwcu 2024", x = "Kwota", y = "Liczba pożyczek") +
+  labs(title = "Distribution of loan amounts in June 2024", x = "Amount", y = "Number of loans") +
   theme_minimal()
 
-# Podsumowanie wyników analizy
+# Summary of analysis results
 if (nrow(outliers) > 0) {
-  cat(sprintf("Zidentyfikowano %d wartości odstających w czerwcu 2024.\n", nrow(outliers)))
+  cat(sprintf("Identified %d outliers in June 2024.\n", nrow(outliers)))
 } else {
-  cat("Nie zidentyfikowano wartości odstających w czerwcu 2024.\n")
+  cat("No outliers identified in June 2024.\n")
 }
 
-
-# Podział danych na czerwiec 2024 i inne miesiące
+# Splitting data into June 2024 and other months
 june_data <- data %>% filter(data_spr == '06.2024')
 other_months_data <- data %>% filter(data_spr != '06.2024')
 
-# Obliczenie średniej kwoty dla czerwca 2024 i pozostałych miesięcy
+# Calculating the average loan amount for June 2024 and other months
 mean_june <- mean(june_data$kw_pozyczki_pln)
 mean_other_months <- mean(other_months_data$kw_pozyczki_pln)
 
-cat("Średnia kwota pożyczek w czerwcu 2024:", mean_june, "\n")
-cat("Średnia kwota pożyczek w pozostałych miesiącach:", mean_other_months, "\n")
+cat("Average loan amount in June 2024:", mean_june, "\n")
+cat("Average loan amount in other months:", mean_other_months, "\n")
 
-# Test t-Studenta porównujący średnie kwoty w czerwcu 2024 z pozostałymi miesiącami
+# Student's t-test comparing the average loan amounts in June 2024 with other months
 t_test_result <- t.test(june_data$kw_pozyczki_pln, other_months_data$kw_pozyczki_pln)
 
-# Wyświetlenie wyników testu t-Studenta
+# Displaying the results of the Student's t-test
 print(t_test_result)
 
-# Wizualizacja porównania średnich kwot - wykres pudełkowy
+# Visualization of the average amount comparison - box plot
 ggplot(data, aes(x = data_spr, y = kw_pozyczki_pln, color = data_spr)) +
   geom_boxplot() +
-  labs(title = "Porównanie kwot pożyczek w czerwcu 2024 i innych miesiącach", 
-       x = "Miesiąc", y = "Kwota") +
+  labs(title = "Comparison of loan amounts in June 2024 and other months", 
+       x = "Month", y = "Amount") +
   theme_minimal()
 
-#Wynik testu t-Studenta wskazuje, że istnieje istotna statystycznie różnica między średnimi kwotami pożyczek w czerwcu 2024 roku a pozostałymi miesiącami. 
+# The result of the Student's t-test indicates a statistically significant difference between 
+# the average loan amounts in June 2024 and the other months.
 
-# t = 17.061 – wartość statystyki t-Studenta. Im wyższa wartość t, tym większa różnica między średnimi w porównywanych grupach. Wartość 17.061 wskazuje na dużą różnicę.
+# t = 17.061 – The t-Student statistic value. The higher the t-value, the greater the difference 
+# between the means of the compared groups. The value of 17.061 indicates a large difference.
 
-# df = 128.74 – Liczba stopni swobody. Wyliczona liczba df (stopnie swobody) wynika z zastosowania testu Welcha, który pozwala na porównanie średnich z grup o różnej wariancji.
+# df = 128.74 – Degrees of freedom. The calculated df results from using Welch's test, 
+# which allows for comparing means from groups with different variances.
 
-# p-value < 2.2e-16 – P-wartość jest znacznie mniejsza niż 0.05 (standardowy poziom istotności). Różnica między średnimi jest bardzo istotna statystycznie, co wyklucza przypadkowość różnicy.
+# p-value < 2.2e-16 – The p-value is much smaller than 0.05 (the standard significance level). 
+# The difference between the means is highly statistically significant, ruling out randomness.
 
-# Test sprawdza hipotezę alternatywną, że średnie kwoty pożyczek są różne w czerwcu 2024 i pozostałych miesiącach. Wynik testu potwierdza tę hipotezę, co oznacza, że średnie nie są równe.
+# The test examines the alternative hypothesis that the average loan amounts are different 
+# in June 2024 and other months. The test results confirm this hypothesis, meaning the averages are not equal.
 
-# Według przedziału ufności, z 95% pewnością rzeczywista różnica średnich kwot pożyczek między czerwcem 2024 a innymi miesiącami wynosi od 794,89 do 1003,45 PLN.
+# According to the confidence interval, there is a 95% probability that the actual difference in average 
+# loan amounts between June 2024 and other months ranges from 794.89 to 1003.45 PLN.
 
-# srednia z czerwca 2024 wynosi 3588.506, natomiast z pozostalych miesiecy 2689.335. Średnia dla czerwca jest  znacznie wyższa niż w pozostałych miesiącach.
+# The average loan amount in June 2024 is 3588.506, while in the other months, it is 2689.335. 
+# The average for June is significantly higher than in the other months.
 
-# Wysoka wartość t i bardzo niska p-wartość wskazują, że istnieje duza różnica między średnimi kwotami pożyczek w czerwcu 2024 a innych miesiącach. Ta różnica jest na tyle istotna, że można przypuszczać, że mogło dojść do manipulacji danymi lub innych nieprawidłowości w czerwcu.
+# The high t-value and very low p-value indicate a significant difference between the average loan 
+# amounts in June 2024 and other months. This difference is substantial enough to suggest that 
+# data manipulation or other irregularities may have occurred in June.
 
-# Średnia kwota pożyczek w czerwcu jest znacznie wyższa niż w pozostałych miesiącach (o około 900 PLN), co dodatkowo potwierdza tezę o możliwych anomaliach w danych.
-
-
+# The average loan amount in June is significantly higher than in other months (by around 900 PLN), 
+# further supporting the hypothesis of possible anomalies in the data.
