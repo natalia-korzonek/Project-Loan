@@ -1,8 +1,3 @@
-Jako audytor w firmie udzielającej pożyczek otrzymałeś zadanie
-analizy danych w celu zidentyfikowania potencjalnych
-przypadków manipulacji kwotami w czerwcu 2024 roku. W pliku
-„Dane_pożyczki.xlsx” posiadasz historyczne dane zawierające
-kwoty (kolumna C) oraz odpowiadające im miesiące (kolumna A).
-Twoim zadaniem jest ocenić, czy na podstawie analizy tych
-danych istnieją przesłanki sugerujące, że doszło do sfałszowania
-kwot w czerwcu 2024 roku, i uzasadnić swoje wnioski.
+As an auditor in a loan company, you have been assigned the task of analyzing data to identify potential cases of amount manipulation in June 2024. The file "Dane_pożyczki.xlsx" contains historical data, including loan amounts (column C) and their corresponding months (column A).  
+
+Your task is to assess whether, based on the analysis of this data, there are indications suggesting that the amounts in June 2024 were falsified and to justify your conclusions.
